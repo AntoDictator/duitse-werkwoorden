@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duitse werkwoorden oefenen</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #eaf2ff;
+    text-align: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    max-width: 650px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 4px 15px #b8c7df;
+}
+
+h1 { color: #174a8b; }
+
+select, input, button {
+    font-size: 18px;
+    padding: 12px;
+    margin: 8px;
+    border-radius: 8px;
+}
+
+input {
+    width: 75%;
+    border: 2px solid #b8c7df;
+}
+
+button {
+    border: none;
+    background: #2463eb;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover { background: #174a8b; }
+
+#feedback {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 18px;
+}
+
+#antwoord {
+    color: #174a8b;
+    font-size: 18px;
+}
+
+#score { color: #333; }
+
+.small {
+    color: #555;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🇩🇪 Duitse werkwoorden oefenen</h1>
+<p>Oefen alle personen in de tegenwoordige tijd (Präsens).</p>
+
+<label for="werkwoord">Kies een werkwoord:</label><br>
+<select id="werkwoord">
+    <option value="alle">Alle werkwoorden</option>
+    <option>haben</option>
+    <option>sein</option>
+    <option>mögen</option>
+    <option>heißen</option>
+    <option>müssen</option>
+    <option>wollen</option>
+    <option>fahren</option>
+    <option>schlafen</option>
+    <option>lesen</option>
+    <option>sprechen</option>
+    <option>spielen</option>
+    <option>wohnen</option>
+</select>
+
+<p id="vraag" style="font-size:25px;font-weight:bold;">
+    ich + haben
+</p>
+
+<p>Vul de juiste vervoeging in:</p>
+
+<input id="invoer" type="text"
+       placeholder="Typ je antwoord..."
+       autocomplete="off">
+
+<br>
+
+<button onclick="controleer()">Controleer</button>
+<button onclick="toonAntwoord()">Toon antwoord</button>
+<button onclick="volgende()">Volgende vraag →</button>
+
+<p id="feedback" aria-live="polite"></p>
+<p id="antwoord"></p>
+<p id="score">Goed: 0 | Fout: 0</p>
+
+<p class="small">
+Tip: let op ä, ö, ü en ß. Hoofdletters en kleine letters
+worden allebei goed gerekend.
+</p>
+
+</div>
+
+<script>
+const werkwoorden = {
+    haben: {
+        ich: "habe",
+        du: "hast",
+        "er/sie/es": "hat",
+        wir: "haben",
+        ihr: "habt",
+        "sie (meervoud)": "haben",
+        "Sie (beleefd)": "haben"
+    },
+    sein: {
+        ich: "bin",
+        du: "bist",
+        "er/sie/es": "ist",
+        wir: "sind",
+        ihr: "seid",
+        "sie (meervoud)": "sind",
+        "Sie (beleefd)": "sind"
+    },
+    mögen: {
+        ich: "mag",
+        du: "magst",
+        "er/sie/es": "mag",
+        wir: "mögen",
+        ihr: "mögt",
+        "sie (meervoud)": "mögen",
+        "Sie (beleefd)": "mögen"
+    },
+    heißen: {
+        ich: "heiße",
+        du: "heißt",
+        "er/sie/es": "heißt",
+        wir: "heißen",
+        ihr: "heißt",
+        "sie (meervoud)": "heißen",
+        "Sie (beleefd)": "heißen"
+    },
+    müssen: {
+        ich: "muss",
+        du: "musst",
+        "er/sie/es": "muss",
+        wir: "müssen",
+        ihr: "müsst",
+        "sie (meervoud)": "müssen",
+        "Sie (beleefd)": "müssen"
+    },
+    wollen: {
+        ich: "will",
+        du: "willst",
+        "er/sie/es": "will",
+        wir: "wollen",
+        ihr: "wollt",
+        "sie (meervoud)": "wollen",
+        "Sie (beleefd)": "wollen"
+    },
+    fahren: {
+        ich: "fahre",
+        du: "fährst",
+        "er/sie/es": "fährt",
+        wir: "fahren",
+        ihr: "fahrt",
+        "sie (meervoud)": "fahren",
+        "Sie (beleefd)": "fahren"
+    },
+    schlafen: {
+        ich: "schlafe",
+        du: "schläfst",
+        "er/sie/es": "schläft",
+        wir: "schlafen",
+        ihr: "schlaft",
+        "sie (meervoud)": "schlafen",
+        "Sie (beleefd)": "schlafen"
+    },
+    lesen: {
+        ich: "lese",
+        du: "liest",
+        "er/sie/es": "liest",
+        wir: "lesen",
+        ihr: "lest",
+        "sie (meervoud)": "lesen",
+        "Sie (beleefd)": "lesen"
+    },
+    sprechen: {
+        ich: "spreche",
+        du: "sprichst",
+        "er/sie/es": "spricht",
+        wir: "sprechen",
+        ihr: "sprecht",
+        "sie (meervoud)": "sprechen",
+        "Sie (beleefd)": "sprechen"
+    },
+    spielen: {
+        ich: "spiele",
+        du: "spielst",
+        "er/sie/es": "spielt",
+        wir: "spielen",
+        ihr: "spielt",
+        "sie (meervoud)": "spielen",
+        "Sie (beleefd)": "spielen"
+    },
+    wohnen: {
+        ich: "wohne",
+        du: "wohnst",
+        "er/sie/es": "wohnt",
+        wir: "wohnen",
+        ihr: "wohnt",
+        "sie (meervoud)": "wohnen",
+        "Sie (beleefd)": "wohnen"
+    }
+};
+
+const personen = Object.keys(werkwoorden.haben);
+
+let huidigWerkwoord = "haben";
+let huidigePersoon = "ich";
+let goed = 0;
+let fout = 0;
+let beantwoord = false;
+
+function volgende() {
+    const keuze = document.getElementById("werkwoord").value;
+    const namen = Object.keys(werkwoorden);
+
+    huidigWerkwoord = keuze === "alle"
+        ? namen[Math.floor(Math.random() * namen.length)]
+        : keuze;
+
+    huidigePersoon =
+        personen[Math.floor(Math.random() * personen.length)];
+
+    document.getElementById("vraag").textContent =
+        huidigePersoon + " + " + huidigWerkwoord;
+
+    document.getElementById("invoer").value = "";
+    document.getElementById("feedback").textContent = "";
+    document.getElementById("antwoord").textContent = "";
+    beantwoord = false;
+
+    document.getElementById("invoer").focus();
+}
+
+function controleer() {
+    if (beantwoord) {
+        document.getElementById("feedback").textContent =
+            "Klik op Volgende vraag om verder te oefenen.";
+        return;
+    }
+
+    const invoer = document.getElementById("invoer")
+        .value.trim().toLocaleLowerCase("de");
+
+    if (!invoer) {
+        document.getElementById("feedback").textContent =
+            "Vul eerst een antwoord in!";
+        return;
+    }
+
+    const juist = werkwoorden[huidigWerkwoord][huidigePersoon];
+
+    if (invoer === juist) {
+        document.getElementById("feedback").textContent =
+            "✅ Helemaal goed!";
+        document.getElementById("feedback").style.color = "green";
+        goed++;
+    } else {
+        document.getElementById("feedback").textContent =
+            "❌ Helaas, dat is niet juist.";
+        document.getElementById("feedback").style.color = "red";
+        document.getElementById("antwoord").textContent =
+            "Het juiste antwoord is: " + juist;
+        fout++;
+    }
+
+    beantwoord = true;
+    updateScore();
+}
+
+function toonAntwoord() {
+    const juist = werkwoorden[huidigWerkwoord][huidigePersoon];
+
+    document.getElementById("antwoord").textContent =
+        "Juiste antwoord: " + juist;
+}
+
+function updateScore() {
+    document.getElementById("score").textContent =
+        "Goed: " + goed + " | Fout: " + fout;
+}
+
+document.getElementById("invoer").addEventListener("keydown",
+    function(event) {
+        if (event.key === "Enter") controleer();
+    });
+
+document.getElementById("werkwoord").addEventListener("change",
+    function() {
+        volgende();
+    });
+
+volgende();
+</script>
+
+</body>
+</html>
